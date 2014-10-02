@@ -16,10 +16,11 @@ void binaryTreeTraverseInOrder(Node *root)
             display(CurrentNode->data);
             CurrentNode -> state = VISITED_RIGHT_NODE;
         }
-        
+         
+     
     if (CurrentNode->left != NULL)
         {
-            stackPush(stack,(Node *)CurrentNode);
+            stackPush(stack,(Node *)CurrentNode); // Push parent to stack
             CurrentNode = CurrentNode->left ;   //Go to left node
             CurrentNode->state = ENTERED_NODE;
             
@@ -71,3 +72,21 @@ void binaryTreeTraverseInOrder(Node *root)
     printf("--------------------------------------------------------------------------\n\n");
 }
 
+void printLinear(Node *node)
+{
+    if (node != NULL)
+    {
+        printLinear(node->left);
+        printf("Node : %d  ",node->data);
+    }
+}
+
+void binaryTreePrintInOrder(Node *node)
+{
+     if (node != NULL)
+    {
+        binaryTreePrintInOrder(node->left);
+        printf("Node : %d  ",node->data);
+        binaryTreePrintInOrder(node->right);
+    }
+}
