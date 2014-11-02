@@ -5,72 +5,97 @@
 void binaryTreeTraverseInOrder(Node *root)
 {
     Node *CurrentNode = root;
+    
+    if (CurrentNode != NULL)
+        CurrentNode->state = ENTERED_NODE ; //Root state to ENTERED_NODE
+    
     Stack *stack = stackNew();
-    printf("created a stack\n");
-
-    printf("\nEntered Node\n\n");
-    CurrentNode->state = ENTERED_NODE ;
-
-    if (CurrentNode->left == NULL && CurrentNode ->right == NULL )
-        {
-            display(CurrentNode->data);
-            CurrentNode -> state = VISITED_RIGHT_NODE;
-        }
-         
-     
-    if (CurrentNode->left != NULL)
-        {
-            stackPush(stack,(Node *)CurrentNode); // Push parent to stack
-            CurrentNode = CurrentNode->left ;   //Go to left node
-            CurrentNode->state = ENTERED_NODE;
-            
-            display(CurrentNode->data); //Display left node data
-            printf("CurrentNode data : %d\n",CurrentNode->data);
-            
-            
-            //--------------------------------------------------//
-            CurrentNode = (Node *)stackPop(stack); //Return to previous node
-            CurrentNode->state = VISITED_LEFT_NODE ;
-            printf("Visited Left Node\n\n");
-            
-            display(CurrentNode->data); //Display parent data
-            printf("CurrentNode data : %d\n\n",CurrentNode->data);
-        }    
-    
-    else if (CurrentNode ->right != NULL) //Left node must be NULL
-        {
-            CurrentNode->state = VISITED_LEFT_NODE ;
-            printf("Visited Left Node\n");
-            //--------------------------------------------------//
-            display(CurrentNode->data); //Display parent data
-            printf("CurrentNode data : %d\n\n",CurrentNode->data);
-        }
-    
  
+    while (root->state != VISITED_RIGHT_NODE)
+    {
+        if (CurrentNode->state == ENTERED_NODE)
+            {
+                printf( "\nCurrentNode state = ENTERED_NODE \n");
+                if (CurrentNode->left == NULL && CurrentNode ->right == NULL) 
+                {
+                    printf( "CurrentNode left and right are NULL \n");
+                    display(CurrentNode->data);
+                    printf( "Changing CurrentNode state to VISITED_RIGHT_NODE \n");
+                    CurrentNode -> state = VISITED_RIGHT_NODE;
+                    printf( "CurrentNode->data : %d\n",CurrentNode->data);
+                   
+                }
     
-    if (CurrentNode->right != NULL && CurrentNode->state == VISITED_LEFT_NODE)
-        {   
-            stackPush(stack,(Node *)CurrentNode);
-            CurrentNode = CurrentNode->right ; // Go to right node
+                else if (CurrentNode->left != NULL)
+                {
+                    printf( "CurrentNode ->left not NULL \n");
                 
-            display(CurrentNode->data); // Display right node data
-            printf("CurrentNode data : %d\n",CurrentNode->data);
+                    stackPush(stack,(Node *)CurrentNode); // Push parent to stack
+                    CurrentNode = CurrentNode->left ;   //Go to left node
+                    printf( "Changing child state to ENTERED_NODE \n");
+                    CurrentNode->state = ENTERED_NODE; //Left child state to ENTERED_NODE
+                }
+                else if (CurrentNode->right != NULL)
+                {
+                    printf( "CurrentNode->left is NULL but CurrentNode-> right not NULL \n");
+                    printf( "Changing parent state to VISITED_LEFT_NODE \n");
+                    display(CurrentNode->data);
+                    printf( "CurrentNode->data : %d\n",CurrentNode->data);
+                    CurrentNode->state = VISITED_LEFT_NODE ; //Parent state to visited left
+                    stackPush(stack,(Node *)CurrentNode); //Push parent into the stack
+                    CurrentNode = CurrentNode->right ; // Go to right node   
+                    printf( "Changing child state to ENTERED_NODE \n");
+                    CurrentNode->state = ENTERED_NODE ;// Right child state to ENTERED_NODE
+                }
                 
-            CurrentNode = (Node *)stackPop(stack);
-            CurrentNode->state = VISITED_RIGHT_NODE ;
-            printf("Visited Right Node\n");
-                
-        }   
-
-    else 
-    if (CurrentNode->state == VISITED_RIGHT_NODE );
-        CurrentNode = (Node *)stackPop(stack);
-        
-        
+            }
+    
+        else if (CurrentNode->state == VISITED_LEFT_NODE)    
+        {
+           printf( "\nCurrentNode state = VISITED_LEFT_NODE \n");
+           if (CurrentNode->right != NULL)
+            {
+                printf( "CurrentNode ->right not NULL \n");
+                display(CurrentNode->data); //Display parent data 
+                printf( "CurrentNode->data : %d\n",CurrentNode->data);
+                stackPush(stack,(Node *)CurrentNode); //Push parent into the stack
+                CurrentNode = CurrentNode->right ; // Go to right node
+                printf( "Changing child state to ENTERED_NODE \n");                
+                CurrentNode->state = ENTERED_NODE ; //Right child state to ENTERED_NODE 
+            }
+           else
+            {
+                printf( "CurrentNode ->right = NULL \n");
+                display(CurrentNode->data);
+                printf( "CurrentNode->data : %d\n",CurrentNode->data);
+                printf( "Changing parent state to VISITED_RIGHT_NODE \n");
+                CurrentNode -> state = VISITED_RIGHT_NODE;
+            }
+        }
+    
+        else if (CurrentNode ->state == VISITED_RIGHT_NODE )
+        {
+            printf( "\nCurrentNode state = VISITED_RIGHT_NODE \n");
+            CurrentNode = (Node *)stackPop(stack); //Pop parent out of stack
+            if (CurrentNode != NULL)
+            {
+                if (CurrentNode->state == ENTERED_NODE) //Parents just visited left if true
+                    CurrentNode->state = VISITED_LEFT_NODE ;
+                else
+                    CurrentNode->state = VISITED_RIGHT_NODE ;
+            }
+        }  
+    }
+  
+    
     stackDel(stack);
-    printf("deleted a stack\n");
-    printf("--------------------------------------------------------------------------\n\n");
+   
 }
+
+
+
+
+
 
 void printLinear(Node *node)
 {
